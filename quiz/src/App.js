@@ -1,6 +1,9 @@
 import React, { useEffect, useReducer } from 'react'
 import Header from './Header'
+import Error from './Error'
+import Loader from './Loader'
 import Main from './Main'
+import { StartScreen } from './StartScreen'
 
 
 const App = () => {
@@ -28,7 +31,7 @@ const App = () => {
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
 
 
   useEffect(() => {
@@ -41,8 +44,10 @@ const App = () => {
       <Header />
 
       <Main>
-        <p>1/15</p>
-        <p>Question ?</p>
+        {status === "loading" && <Loader />}
+        {status === "error" && <Error />}
+        {status === "error" && <Error />}
+        {status === "ready" && <StartScreen />}
       </Main>
     </div>
   )
