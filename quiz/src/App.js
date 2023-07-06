@@ -4,6 +4,7 @@ import Error from './Error'
 import Loader from './Loader'
 import Main from './Main'
 import { StartScreen } from './StartScreen'
+import Question from './Question'
 
 
 const App = () => {
@@ -11,7 +12,8 @@ const App = () => {
 
     questions: [],
     // 'loading', 'error', 'ready','active','finished'
-    status: 'loading'
+    status: 'loading',
+    index: 0
   };
 
   function reducer(state, action) {
@@ -22,6 +24,11 @@ const App = () => {
           questions: action.payload,
           status: "ready"
         };
+      case "start":
+        return {
+          ...state,
+          status: "action"
+        }
       case "dataFailed":
         return {
           ...state, status: "error",
@@ -31,8 +38,9 @@ const App = () => {
     }
   };
 
-  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index }, dispatch] = useReducer(reducer, initialState);
 
+  const numQuestions = questions.length
 
   useEffect(() => {
     fetch(`http://localhost:8000/questions`).then(res => res.json()).then((data) => dispatch({ type: "dataRecieved", payload: data })).catch(err => dispatch({ type: "dataFailed" }))
@@ -47,7 +55,8 @@ const App = () => {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "error" && <Error />}
-        {status === "ready" && <StartScreen />}
+        {status === "ready" && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
+        {status === "active" && <Question question={questions[index]} />}
       </Main>
     </div>
   )
